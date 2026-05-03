@@ -12,5 +12,5 @@ _header:
 	@echo GitHub Backup
 	@echo -------------
 
-crear_usuarios:
+backup:
 	@poetry run python backup.py

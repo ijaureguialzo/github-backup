@@ -18,6 +18,20 @@ def load_token() -> str:
     return token
 
 
+def get_current_user(token: str) -> dict:
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    response = requests.get(f"{GITHUB_API}/user", headers=headers)
+    if response.status_code == 401:
+        print("Error: token no válido o sin permisos suficientes", file=sys.stderr)
+        sys.exit(1)
+    response.raise_for_status()
+    return response.json()
+
+
 def list_organizations(token: str) -> list[dict]:
     headers = {
         "Authorization": f"Bearer {token}",
@@ -39,11 +53,11 @@ def list_organizations(token: str) -> list[dict]:
 
 def main():
     token = load_token()
+    user = get_current_user(token)
     orgs = list_organizations(token)
-    if not orgs:
-        print("No se encontraron organizaciones accesibles con este token.")
-        return
-    print(f"Organizaciones accesibles ({len(orgs)}):")
+    total = 1 + len(orgs)
+    print(f"Cuentas accesibles ({total}):")
+    print(f"  - {user['login']} (usuario)")
     for org in orgs:
         print(f"  - {org['login']}")
 
