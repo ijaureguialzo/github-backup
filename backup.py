@@ -4,9 +4,13 @@ from pathlib import Path
 
 import questionary
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 TOKEN_FILE = Path(__file__).parent / ".token"
-DATA_DIR = Path(__file__).parent / "data"
+DATA_DIR = Path(os.getenv("DATA_DIR", Path(__file__).parent / "data"))
 GITHUB_API = "https://api.github.com"
 
 
