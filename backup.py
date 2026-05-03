@@ -117,7 +117,8 @@ def main():
     orgs = list_organizations(token)
 
     user_label = user["login"] + " (usuario)"
-    choices = [user_label] + [org["login"] for org in orgs]
+    org_logins = sorted([org["login"] for org in orgs], key=str.casefold)
+    choices = [user_label] + org_logins
 
     selected = questionary.checkbox(
         "Selecciona las cuentas (↑↓ para navegar, espacio para marcar, Enter para confirmar):",
