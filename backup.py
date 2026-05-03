@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import questionary
 import requests
 
 TOKEN_FILE = Path(__file__).parent / ".token"
@@ -55,11 +56,21 @@ def main():
     token = load_token()
     user = get_current_user(token)
     orgs = list_organizations(token)
-    total = 1 + len(orgs)
-    print(f"Cuentas accesibles ({total}):")
-    print(f"  - {user['login']} (usuario)")
-    for org in orgs:
-        print(f"  - {org['login']}")
+
+    choices = [user["login"] + " (usuario)"] + [org["login"] for org in orgs]
+
+    selected = questionary.checkbox(
+        "Selecciona las cuentas (↑↓ para navegar, espacio para marcar, Enter para confirmar):",
+        choices=choices,
+    ).ask()
+
+    if selected is None:
+        print("Operación cancelada.")
+        return
+
+    print(f"\nCuentas seleccionadas ({len(selected)}):")
+    for account in selected:
+        print(f"  - {account}")
 
 
 if __name__ == "__main__":
